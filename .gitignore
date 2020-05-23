@@ -1,14 +1,21 @@
-node_modules/**/*
+# dependencies
+node_modules
+npm-debug.log*
+lerna-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# expo
 .expo/*
-npm-debug.*
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
 *.orig.*
-web-build/
-web-report/
+web-build
+web-report
 
 # macOS
 .DS_Store
