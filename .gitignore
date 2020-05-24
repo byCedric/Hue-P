@@ -7,7 +7,7 @@ yarn-error.log*
 package-lock.json
 
 # expo
-.expo/*
+.expo
 *.jks
 *.p8
 *.p12
