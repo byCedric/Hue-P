@@ -14,7 +14,7 @@
 		"splash": {
 			"image": "./src/assets/images/app-splash.png",
 			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
+			"backgroundColor": "#222B45"
 		},
 		"updates": {
 			"fallbackToCacheTimeout": 0
@@ -29,6 +29,9 @@
 		"android": {
 			"package": "com.bycedric.huep",
 			"permissions": []
+		},
+		"androidStatusBar": {
+			"barStyle": "light-content"
 		}
 	}
 }
