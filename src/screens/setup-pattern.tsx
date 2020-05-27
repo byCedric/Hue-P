@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Text, Layout, Card } from '@ui-kitten/components';
 import { Screen } from '../components/screen';
 import { HuePattern, useHue } from '../providers/hue';
+import { Message } from '../components/message';
 
 const patterns = [
 	{
@@ -35,10 +36,10 @@ export const SetupPatternScreen: React.FC = () => {
 	return (
 		<Screen>
 			<Layout style={styles.container}>
-				<View style={styles.wrapper}>
-					<Text category='h1' style={styles.heading}>One final thing.</Text>
-					<Text category='p1'>What pattern do you want to see?</Text>
-				</View>
+				<Message
+					title='One final thing.'
+					message='What pattern do you want to see?'
+				/>
 				<Layout style={styles.patterns}>
 					{patterns.map(pattern => (
 						<Card
@@ -64,13 +65,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-	},
-	wrapper: {
-		margin: 16,
-		maxWidth: '80%',
-	},
-	heading: {
-		textAlign: 'center',
 	},
 	patterns: {
 		flexDirection: 'row',

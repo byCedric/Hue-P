@@ -1,13 +1,13 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { StyleSheet, View, LayoutChangeEvent } from 'react-native';
-import { Text, Layout, Button } from '@ui-kitten/components';
-
+import { Layout, Button } from '@ui-kitten/components';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { useHue, HueLight, HuePatternFrame } from '../providers/hue';
 import { DiscoFloor } from '../components/disco-floor';
 import { LightMap } from '../components/light-map';
 import { Screen } from '../components/screen';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { Message } from '../components/message';
 
 const gridWidth = 5;
 const gridHeight = 1;
@@ -62,13 +62,17 @@ export const DiscoScreen: React.FC = () => {
 		loopId.current = undefined;
 	}, []);
 
+	useEffect(() => {
+		hue.lights.forEach(light => onLightChange(light, 0));
+	}, []);
+
 	return (
 		<Screen>
 			<Layout style={styles.container}>
-				<View style={styles.wrapper}>
-					<Text category='h1' style={styles.heading}>Enjoy!</Text>
-					<Text category='p1'>Move your lights onto the disco floor, and see magic happen!</Text>
-				</View>
+				<Message
+					title='Enjoy!'
+					message='Move your lights onto the disco floor, and see magic happen!'
+				/>
 				<View
 					onLayout={onFloorLayout}
 					style={[styles.floor, { height: (floorWidth / gridWidth) * gridHeight }]}
@@ -89,27 +93,23 @@ export const DiscoScreen: React.FC = () => {
 					</DiscoFloor>
 				</View>
 				<Layout style={styles.menu}>
-					<View style={styles.menuItem}>
-						<Button
-							onPress={onStartOver}
-							status='secondary'
-							accessoryLeft={() => (
-								<MaterialIcons name='navigate-before' color='white' size={24} />
-							)}
-						>
-							Start over
-						</Button>
-					</View>
-					<View style={[styles.menuItem, { paddingHorizontal: 32 }]}>
+					<Button
+						onPress={onStartOver}
+						status='secondary'
+						accessoryLeft={() => (
+							<MaterialIcons name='navigate-before' color='white' size={24} />
+						)}
+					>
+						Reset
+					</Button>
+					<Layout>
 						{isLooping && (
 							<Button
 								onPress={onStopLoop}
 								accessoryRight={() => (
 									<MaterialIcons name='pause' color='white' size={24} />
 								)}
-							>
-								Pause
-							</Button>
+							/>
 						)}
 						{!isLooping && (
 							<Button
@@ -117,22 +117,18 @@ export const DiscoScreen: React.FC = () => {
 								accessoryRight={() => (
 									<MaterialIcons name='play-arrow' color='white' size={24} />
 								)}
-							>
-								Play
-							</Button>
+							/>
 						)}
-					</View>
-					<View style={styles.menuItem}>
-						<Button
-							onPress={onNextFrame}
-							status='secondary'
-							accessoryRight={() => (
-								<MaterialIcons name='navigate-next' color='white' size={24} />
-							)}
-						>
-							Next frame
-						</Button>
-					</View>
+					</Layout>
+					<Button
+						onPress={onNextFrame}
+						status='secondary'
+						accessoryRight={() => (
+							<MaterialIcons name='navigate-next' color='white' size={24} />
+						)}
+					>
+						Next
+					</Button>
 				</Layout>
 			</Layout>
 		</Screen>
@@ -157,12 +153,9 @@ const styles = StyleSheet.create({
 		margin: 16,
 	},
 	menu: {
-		margin: 16,
+		margin: 32,
 		width: '80%',
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-	},
-	menuItem:{
-		flex: 1,
 	},
 });

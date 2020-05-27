@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useContext, useState, useCallback } from 'react';
+import React, { createContext, useEffect, useContext, useState, useCallback, useMemo } from 'react';
 import { Lamp as HueLight } from 'hue-hacking-node';
 import { HueSdk, HueBridgeInfo, HuePattern } from '../services/hue';
 
@@ -88,6 +88,7 @@ export function useHueLights() {
 	const [loading, setLoading] = useState(false);
 	const [allLights, setAllLights] = useState<HueLight[]>([]);
 	const [lightsEnabled, setLightsEnabled] = useState<{ [key: number]: boolean }>({});
+	const [hasLightEnabled, setHasLightEnabled] = useState(false);
 
 	const fetchLights = useCallback(async () => {
 		setLoading(true);
@@ -113,10 +114,13 @@ export function useHueLights() {
 			hue.sdk.turnOff(light.lampIndex);
 		}
 
-		setLightsEnabled({
+		const newLightsEnabled = {
 			...lightsEnabled,
 			[light.lampIndex]: !isEnabled,
-		});
+		};
+
+		setLightsEnabled(newLightsEnabled);
+		setHasLightEnabled(Object.values(newLightsEnabled).filter(Boolean).length > 0);
 	}, [lightsEnabled]);
 
 	const saveLights = useCallback(() => {
@@ -129,6 +133,7 @@ export function useHueLights() {
 		loading,
 		allLights,
 		lightsEnabled,
+		hasLightEnabled,
 		toggleLight,
 		fetchLights,
 		saveLights,

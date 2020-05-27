@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Text, Layout, Button, Card, useTheme } from '@ui-kitten/components';
 import { useHueLights } from '../providers/hue';
 import { Screen } from '../components/screen';
+import { Message } from '../components/message';
 
 export const SetupLightsScreen: React.FC = () => {
 	const navigation = useNavigation();
@@ -13,7 +14,7 @@ export const SetupLightsScreen: React.FC = () => {
 
 	const onLightSave = useCallback(() => {
 		hue.saveLights();
-		navigation.navigate('Disco');
+		navigation.navigate('SetupPattern');
 	}, [hue.saveLights]);
 
 	useEffect(() => {
@@ -26,10 +27,10 @@ export const SetupLightsScreen: React.FC = () => {
 		return (
 			<Screen>
 				<Layout style={styles.container}>
-					<View style={styles.wrapper}>
-						<Text category='h1' style={styles.heading}>Sit tight.</Text>
-						<Text category='p1'>We are almost done, searching for your lights...</Text>
-					</View>
+					<Message
+						title='Sit tight.'
+						message='We are almost done, searching for your lights...'
+					/>
 				</Layout>
 			</Screen>
 		);
@@ -39,12 +40,10 @@ export const SetupLightsScreen: React.FC = () => {
 		return (
 			<Screen>
 				<Layout style={styles.container}>
-					<View style={styles.wrapper}>
-						<Text category='h1' style={styles.heading}>Good and bad news...</Text>
-						<Text category='p1'>
-							Hue told us there are no light bulbs connected, but you can still retry maybe?
-						</Text>
-					</View>
+					<Message
+						title='Good and bad news...'
+						message='Hue told us there are no light bulbs connected, but you can still retry maybe?'
+					/>
 					<Button onPress={hue.fetchLights}>Search harder</Button>
 				</Layout>
 			</Screen>
@@ -56,15 +55,14 @@ export const SetupLightsScreen: React.FC = () => {
 	return (
 		<Screen>
 			<Layout style={styles.container}>
-				<View style={styles.wrapper}>
-					<Text category='h1' style={styles.heading}>Great!</Text>
-					<Text category='p1'>
-						{hue.allLights.length === 1
+				<Message
+					title='Great!'
+					message={
+						hue.allLights.length === 1
 							? 'We found 1 light bulb! Press to enable it.'
 							: `We found ${hue.allLights.length} light bulbs! Press on the ones you want to use.`
-						}
-					</Text>
-				</View>
+					}
+				/>
 				<Layout style={styles.lights}>
 					{hue.allLights.map(light => {
 						const isDisabled = !light.state.xy;
@@ -92,8 +90,9 @@ export const SetupLightsScreen: React.FC = () => {
 				</Layout>
 				<Button
 					onPress={onLightSave}
+					disabled={!hue.hasLightEnabled}
 					accessoryRight={() => (
-						<MaterialIcons name='navigate-next' color='white' size={24} />
+						!hue.hasLightEnabled ? <></> : <MaterialIcons name='navigate-next' color='white' size={24} />
 					)}
 				>
 					Im done!
@@ -108,13 +107,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-	},
-	wrapper: {
-		margin: 16,
-		maxWidth: '80%',
-	},
-	heading: {
-		textAlign: 'center',
 	},
 	lights: {
 		margin: 16,

@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute, } from '@react-navigation/native';
-import { Text, Layout, Button, Spinner } from '@ui-kitten/components';
+import { Layout, Button, Spinner } from '@ui-kitten/components';
 import { useHueAuthenticate, HueBridgeInfo } from '../providers/hue';
 import { Screen } from '../components/screen';
+import { Message } from '../components/message';
 
 export const SetupBridgeAuthScreen: React.FC = () => {
 	const navigation = useNavigation();
@@ -27,10 +28,10 @@ export const SetupBridgeAuthScreen: React.FC = () => {
 		return (
 			<Screen>
 				<Layout style={styles.container}>
-					<View style={styles.wrapper}>
-						<Text category='h1' style={styles.heading}>We need your permission.</Text>
-						<Text category='p1'>Please press the button on top of your Hue bridge.</Text>
-					</View>
+					<Message
+						title='We need your permission.'
+						message='Please press the button on top of your Hue bridge.'
+					/>
 					<Spinner size='giant' />
 				</Layout>
 			</Screen>
@@ -41,10 +42,10 @@ export const SetupBridgeAuthScreen: React.FC = () => {
 		return (
 			<Screen>
 				<Layout style={styles.container}>
-					<View style={styles.wrapper}>
-						<Text category='h1' style={styles.heading}>Awesome!</Text>
-						<Text category='p1'>Let's chose the light bulbs you want to use.</Text>
-					</View>
+					<Message
+						title='Awesome!'
+						message={`Let's chose the light bulbs you want to use.`}
+					/>
 					<Button
 						onPress={onLightSetup}
 						accessoryRight={() => (
@@ -65,11 +66,11 @@ export const SetupBridgeAuthScreen: React.FC = () => {
 	return (
 		<Screen>
 			<Layout style={styles.container}>
-				<View style={styles.wrapper}>
-					<Text category='h1' style={styles.heading}>Ready when you are!</Text>
-					<Text category='p1'>Authentication timed out, but you can retry whenever you are ready.</Text>
-				</View>
-				<Button onPress={authenticate}>Try again</Button>
+				<Message
+					title='Ready when you are.'
+					message={`Authentication timed out, but you can retry whenever you are ready.`}
+				/>
+				<Button onPress={authenticate}>I'm ready</Button>
 			</Layout>
 		</Screen>
 	);
@@ -80,13 +81,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-	},
-	wrapper: {
-		margin: 16,
-		maxWidth: '80%',
-	},
-	heading: {
-		textAlign: 'center',
 	},
 	bridges: {
 		margin: 8,
