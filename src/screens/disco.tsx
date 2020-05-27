@@ -1,19 +1,33 @@
-import React, { useMemo, useState, useCallback, useEffect, useRef } from 'react';
-import { View, Button, Dimensions } from 'react-native';
-
-import { useHue, HueLight, HuePatternFrame, HuePattern } from '../providers/hue';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { StyleSheet, View, LayoutChangeEvent } from 'react-native';
+import { Layout, Button } from '@ui-kitten/components';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { useHue, HueLight, HuePatternFrame } from '../providers/hue';
 import { DiscoFloor } from '../components/disco-floor';
 import { LightMap } from '../components/light-map';
+import { Screen } from '../components/screen';
+import { Message } from '../components/message';
 
 const gridWidth = 5;
 const gridHeight = 1;
 
 export const DiscoScreen: React.FC = () => {
+	const navigation = useNavigation();
 	const hue = useHue();
-	const height = useMemo(() => Dimensions.get('window').width / gridWidth, []);
 	const lightGrid = useRef<{ [key: number]: number }>({}).current;
 	const loopId = useRef<number | undefined>();
+	const [isLooping, setIsLooping] = useState(false);
 	const [frame, setFrame] = useState<HuePatternFrame>(hue.pattern.getFrame());
+	const [floorWidth, setFloorWidth] = useState(0);
+
+	const onFloorLayout = useCallback((event: LayoutChangeEvent) => {
+		setFloorWidth(event.nativeEvent.layout.width);
+	}, []);
+
+	const onStartOver = useCallback(() => {
+		navigation.navigate('SetupLights');
+	}, []);
 
 	const onLightChange = useCallback((light: HueLight, position: number) => {
 		lightGrid[light.lampIndex] = position;
@@ -33,55 +47,115 @@ export const DiscoScreen: React.FC = () => {
 		setFrame(frame);
 	}, [hue]);
 
-	const startAnimation = useCallback(() => {
+	const onStartLoop = useCallback(() => {
 		window.clearInterval(loopId.current);
+		setIsLooping(true);
 		loopId.current = window.setInterval(
 			onNextFrame,
 			hue.pattern.getTransitionSpeed(),
 		);
 	}, [onNextFrame]);
 
-	const stopAnimation = useCallback(() => {
+	const onStopLoop = useCallback(() => {
 		window.clearInterval(loopId.current);
+		setIsLooping(false);
 		loopId.current = undefined;
 	}, []);
 
-	const setPattern = useCallback((pattern: HuePattern) => {
-		hue.setPattern(pattern);
-		setFrame(pattern.getFrame());
+	useEffect(() => {
+		hue.lights.forEach(light => onLightChange(light, 0));
 	}, []);
 
-	useEffect(() => {
-		hue.lights.forEach((light, key) => onLightChange(light, key));
-	});
-
 	return (
-		<View style={{ flex: 1, justifyContent: 'center' }}>
-			<DiscoFloor
-				width={gridWidth}
-				height={gridHeight}
-				tileColors={frame}
-				tileEmptyColor='transparent'
-			>
-				<LightMap
-					width={gridWidth}
-					height={gridHeight}
-					tileSize={height}
-					lights={hue.lights}
-					onChange={onLightChange}
-					onIdentify={light => hue.sdk.flash(light.lampIndex)}
+		<Screen>
+			<Layout style={styles.container}>
+				<Message
+					title='Enjoy!'
+					message='Move your lights onto the disco floor, and see magic happen!'
 				/>
-			</DiscoFloor>
-			<View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 56 }}>
-				<Button title='expo' onPress={() => setPattern(HuePattern.getWave())} />
-				<Button title='kr' onPress={() => setPattern(HuePattern.getKnightRider())} />
-				<Button title='complex' onPress={() => setPattern(HuePattern.getComplex())} />
-			</View>
-			<View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 56 }}>
-				<Button title='next' onPress={onNextFrame} />
-				<Button title='start' onPress={startAnimation} />
-				<Button title='stop' onPress={stopAnimation} />
-			</View>
-		</View>
+				<View
+					onLayout={onFloorLayout}
+					style={[styles.floor, { height: (floorWidth / gridWidth) * gridHeight }]}
+				>
+					<DiscoFloor
+						width={gridWidth}
+						height={gridHeight}
+						tileColors={frame}
+					>
+						<LightMap
+							width={gridWidth}
+							height={gridHeight}
+							tileSize={floorWidth / gridWidth}
+							lights={hue.lights}
+							onChange={onLightChange}
+							onIdentify={light => hue.sdk.flash(light.lampIndex)}
+						/>
+					</DiscoFloor>
+				</View>
+				<Layout style={styles.menu}>
+					<Button
+						onPress={onStartOver}
+						status='secondary'
+						accessoryLeft={() => (
+							<MaterialIcons name='navigate-before' color='white' size={24} />
+						)}
+					>
+						Reset
+					</Button>
+					<Layout>
+						{isLooping && (
+							<Button
+								onPress={onStopLoop}
+								accessoryRight={() => (
+									<MaterialIcons name='pause' color='white' size={24} />
+								)}
+							/>
+						)}
+						{!isLooping && (
+							<Button
+								onPress={onStartLoop}
+								accessoryRight={() => (
+									<MaterialIcons name='play-arrow' color='white' size={24} />
+								)}
+							/>
+						)}
+					</Layout>
+					<Button
+						onPress={onNextFrame}
+						status='secondary'
+						accessoryRight={() => (
+							<MaterialIcons name='navigate-next' color='white' size={24} />
+						)}
+					>
+						Next
+					</Button>
+				</Layout>
+			</Layout>
+		</Screen>
 	);
 };
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	wrapper: {
+		margin: 16,
+		maxWidth: '80%',
+	},
+	heading: {
+		textAlign: 'center',
+	},
+	floor: {
+		width: '80%',
+		margin: 16,
+	},
+	menu: {
+		margin: 32,
+		width: '80%',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+});

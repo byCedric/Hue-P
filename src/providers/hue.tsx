@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useContext, useState, useCallback } from 'react';
+import React, { createContext, useEffect, useContext, useState, useCallback, useMemo } from 'react';
 import { Lamp as HueLight } from 'hue-hacking-node';
 import { HueSdk, HueBridgeInfo, HuePattern } from '../services/hue';
 
@@ -8,15 +8,17 @@ export const HueContext = createContext<HueContextData>({
 	sdk: new HueSdk(),
 	pattern: HuePattern.getKnightRider(),
 	lights: [],
-	initialize: () => Promise.reject(new Error('Missing Hue provider')),
+	setSdk: () => { throw new Error('Missing Hue provider') },
 	setPattern: () => { throw new Error('Missing Hue provider') },
+	setLights: () => { throw new Error('Missing Hue provider') },
 });
 
 export interface HueContextData {
 	sdk: HueSdk;
-	pattern: HuePattern;
+	setSdk: (sdk: HueSdk) => void;
 	lights: HueLight[];
-	initialize: (sdk: HueSdk) => Promise<void>;
+	setLights: (lights: HueLight[]) => void;
+	pattern: HuePattern;
 	setPattern: (pattern: HuePattern) => void;
 }
 
@@ -25,18 +27,13 @@ export const HueProvider: React.FC = (props) => {
 	const [lights, setLights] = useState<HueLight[]>([]);
 	const [pattern, setPattern] = useState<HuePattern>(HuePattern.getKnightRider());
 
-	const initialize = useCallback(async (newSdk: HueSdk) => {
-		const allLights = await newSdk.getLamps();
-		const relevantLights = allLights.filter(light => light.state.xy);
-
-		newSdk.setnumberOfLamps(relevantLights.length);
-
-		setSdk(newSdk);
-		setLights(relevantLights);
-	}, []);
+	useEffect(
+		() => sdk.setnumberOfLamps(lights.length),
+		[sdk, lights.length],
+	);
 
 	return (
-		<HueContext.Provider value={{ sdk, pattern, lights, initialize, setPattern }}>
+		<HueContext.Provider value={{ sdk, setSdk, lights, setLights, pattern, setPattern }}>
 			{props.children}
 		</HueContext.Provider>
 	);
@@ -65,20 +62,16 @@ export function useHueDiscovery(): [HueBridgeInfo[], boolean, () => Promise<void
 }
 
 export function useHueAuthenticate(bridge: HueBridgeInfo): [string, boolean, () => Promise<void>] {
-	const { sdk, initialize } = useHue();
+	const hue = useHue();
 	const [loading, setLoading] = useState(false);
-	const [session, setSession] = useState(
-		(!sdk.getConfig().key || sdk.getConfig().key === 'testapp')
-			? ''
-			: sdk.getConfig().key
-	);
+	const [session, setSession] = useState('');
 
 	const authenticate = useCallback(async () => {
 		setLoading(true);
 		try {
 			const newSession = await HueSdk.authenticate(bridge);
 			setSession(newSession);
-			initialize(new HueSdk({ key: newSession, ip: bridge.internalipaddress }));
+			hue.setSdk(new HueSdk({ key: newSession, ip: bridge.internalipaddress }));
 		} catch (error) {
 			console.warn(error);
 			setSession('');
@@ -88,4 +81,61 @@ export function useHueAuthenticate(bridge: HueBridgeInfo): [string, boolean, () 
 	}, []);
 
 	return [session, loading, authenticate];
+}
+
+export function useHueLights() {
+	const hue = useHue();
+	const [loading, setLoading] = useState(false);
+	const [allLights, setAllLights] = useState<HueLight[]>([]);
+	const [lightsEnabled, setLightsEnabled] = useState<{ [key: number]: boolean }>({});
+	const [hasLightEnabled, setHasLightEnabled] = useState(false);
+
+	const fetchLights = useCallback(async () => {
+		setLoading(true);
+		try {
+			const lights = await hue.sdk.getLamps();
+			setAllLights(lights.filter(light => light.state.reachable));
+		} catch (error) {
+			console.warn(error);
+			setAllLights([]);
+		} finally {
+			setLoading(false);
+		}
+	}, [hue.sdk]);
+
+	const toggleLight = useCallback(async (light: HueLight) => {
+		const isEnabled = lightsEnabled[light.lampIndex];
+
+		if (!isEnabled) {
+			hue.sdk.flash(light.lampIndex).then(() => {
+				hue.sdk.setState(light, { on: true, bri: 254 }, true);
+			});
+		} else {
+			hue.sdk.turnOff(light.lampIndex);
+		}
+
+		const newLightsEnabled = {
+			...lightsEnabled,
+			[light.lampIndex]: !isEnabled,
+		};
+
+		setLightsEnabled(newLightsEnabled);
+		setHasLightEnabled(Object.values(newLightsEnabled).filter(Boolean).length > 0);
+	}, [lightsEnabled]);
+
+	const saveLights = useCallback(() => {
+		hue.setLights(
+			allLights.filter(light => lightsEnabled[light.lampIndex] === true)
+		);
+	}, [allLights, lightsEnabled]);
+
+	return {
+		loading,
+		allLights,
+		lightsEnabled,
+		hasLightEnabled,
+		toggleLight,
+		fetchLights,
+		saveLights,
+	};
 }

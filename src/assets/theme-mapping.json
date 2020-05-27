@@ -1,0 +1,117 @@
+{
+	"strict": {
+		"text-font-family": "open-sans-regular",
+		"text-font-weight": "400",
+		"header-font-family": "raleway-bold",
+		"header-font-weight": "700",
+		"text-heading-1-font-size": 32,
+		"text-heading-1-font-weight": "$header-font-weight",
+		"text-heading-1-font-family": "$header-font-family",
+		"text-heading-1-line-height": 38,
+		"text-heading-2-font-weight": "$header-font-weight",
+		"text-heading-2-font-family": "$header-font-family",
+		"text-heading-3-font-weight": "$header-font-weight",
+		"text-heading-3-font-family": "$header-font-family",
+		"text-heading-4-font-weight": "$header-font-weight",
+		"text-heading-4-font-family": "$header-font-family",
+		"text-heading-5-font-weight": "$header-font-weight",
+		"text-heading-5-font-family": "$header-font-family",
+		"text-heading-6-font-weight": "$header-font-weight",
+		"text-heading-6-font-family": "$header-font-family",
+		"text-paragraph-1-font-size": 16,
+		"text-paragraph-1-font-weight": "$text-font-weight",
+		"text-paragraph-1-font-family": "$text-font-family",
+		"text-paragraph-1-line-height": 24
+	},
+	"components": {
+		"Button": {
+			"meta": {
+				"variantGroups": {
+					"status": {
+						"secondary": {
+							"default": false
+						}
+					}
+				}
+			},
+			"appearances": {
+				"filled": {
+					"variantGroups": {
+						"status": {
+							"secondary": {
+								"borderColor": "color-basic-900",
+								"backgroundColor": "color-basic-900",
+								"textColor": "text-control-color",
+								"iconTintColor": "text-control-color",
+								"state": {
+									"focused": {
+										"borderColor": "color-basic-1000",
+										"backgroundColor": "color-basic-1000"
+									},
+									"hover": {
+										"borderColor": "color-basic-700",
+										"backgroundColor": "color-basic-700"
+									},
+									"active": {
+										"borderColor": "color-basic-1100",
+										"backgroundColor": "color-basic-1100"
+									},
+									"disabled": {
+										"borderColor": "color-basic-1100",
+										"backgroundColor": "color-basic-1100",
+										"textColor": "text-disabled-color",
+										"iconTintColor": "text-disabled-color"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"Card": {
+			"appearances": {
+				"filled": {
+					"variantGroups": {
+						"status": {
+							"primary": {
+								"accentHeight": 0,
+								"backgroundColor": "color-basic-900"
+							},
+							"success": {
+								"accentHeight": 0,
+								"backgroundColor": "color-basic-200"
+							}
+						}
+					}
+				}
+			}
+		},
+		"Text": {
+			"meta": {
+				"scope": "all",
+				"parameters": {
+					"lineHeight": {
+						"type": "number"
+					}
+				}
+			},
+			"appearances": {
+				"default": {
+					"variantGroups": {
+						"category": {
+							"h1": {
+								"color": "color-basic-100",
+								"lineHeight": "text-heading-1-line-height"
+							},
+							"p1": {
+								"color": "color-basic-600",
+								"lineHeight": "text-paragraph-1-line-height"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { StyleSheet, View, LayoutChangeEvent, Dimensions } from 'react-native';
+import { StyleSheet, View, LayoutChangeEvent } from 'react-native';
+import { useTheme } from '@ui-kitten/components';
 import range from 'lodash/range';
-import Draggable from 'react-native-draggable';
 
 export const DiscoFloor: React.FC<DiscoFloorProps> = (props) => {
+	const theme = useTheme();
 	const [containerWidth, setContainerWidth] = useState(0);
-	// const [containerHeight, setContainerHeight] = useState(0);
 
 	const totalHeight = useMemo(
 		() => (containerWidth / props.width) * props.height,
@@ -19,7 +19,6 @@ export const DiscoFloor: React.FC<DiscoFloorProps> = (props) => {
 
 	const onContainerLayout = useCallback((event: LayoutChangeEvent) => {
 		setContainerWidth(event.nativeEvent.layout.width);
-		// setContainerHeight(event.nativeEvent.layout.height);
 	}, []);
 
 	return (
@@ -27,11 +26,12 @@ export const DiscoFloor: React.FC<DiscoFloorProps> = (props) => {
 			{tiles.map(key => (
 				<View
 					key={`dance-floor-tile-${key}`}
-					style={{
+					style={[styles.tile, {
 						width: containerWidth / props.width,
 						height: containerWidth / props.width,
-						backgroundColor: props.tileColors![key] || props.tileEmptyColor,
-					}}
+						backgroundColor: props.tileColors![key] || (props.tileEmptyColor || theme['color-basic-900']),
+						borderColor: theme['color-basic-800'],
+					}]}
 				/>
 			))}
 			<View style={[styles.overlay, { width: containerWidth, height: totalHeight }]}>
@@ -43,7 +43,6 @@ export const DiscoFloor: React.FC<DiscoFloorProps> = (props) => {
 
 DiscoFloor.defaultProps = {
 	tileColors: [],
-	tileEmptyColor: 'black',
 };
 
 export interface DiscoFloorProps {
@@ -65,5 +64,9 @@ const styles = StyleSheet.create({
 	},
 	overlay: {
 		position: 'absolute',
+	},
+	tile: {
+		borderRadius: 8,
+		borderWidth: 1,
 	},
 });
