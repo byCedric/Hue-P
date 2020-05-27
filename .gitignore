@@ -19,3 +19,6 @@ web-report
 
 # macOS
 .DS_Store
+
+# google service
+/api-*.json
