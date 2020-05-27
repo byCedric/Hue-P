@@ -6,8 +6,6 @@ import { default as themeMapping } from '../assets/theme-mapping.json';
 
 const customMapping = merge({}, eva.mapping, themeMapping);
 
-console.log(customMapping.components.Text)
-
 export const ThemeProvider: React.FC = (props) => (
 	<ApplicationProvider
 		{...eva}

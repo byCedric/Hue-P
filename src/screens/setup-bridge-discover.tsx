@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { Card, Text, Layout, Button } from '@ui-kitten/components';
 import { useHueDiscovery, HueBridgeInfo } from '../providers/hue';
@@ -44,12 +43,10 @@ export const SetupBridgeDiscoverScreen: React.FC = () => {
 							Make sure you are connected to your local network.
 						</Text>
 					</View>
-					<Button onPress={discover}>
-						Try again
-					</Button>
+					<Button onPress={discover}>Try again</Button>
 				</Layout>
 			</Screen>
-		)
+		);
 	}
 
 	return (
@@ -103,6 +100,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	bridge: {
+		flex: 1,
 		margin: 8,
 	},
 });
