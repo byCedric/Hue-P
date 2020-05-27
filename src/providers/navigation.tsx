@@ -11,7 +11,7 @@ const Stack = createStackNavigator();
 
 export const NavigationProvider: React.FC = () => (
 	<NavigationContainer>
-		<Stack.Navigator initialRouteName='SetupBridgeDiscover'>
+		<Stack.Navigator initialRouteName='SetupBridgeDiscover' screenOptions={{ headerShown: false }}>
 			<Stack.Screen name="SetupBridgeDiscover" component={SetupBridgeDiscoverScreen} />
 			<Stack.Screen name="SetupBridgeAuth" component={SetupBridgeAuthScreen} />
 
