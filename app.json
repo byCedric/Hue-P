@@ -23,7 +23,12 @@
 			"src/assets/**/*"
 		],
 		"ios": {
-			"supportsTablet": true
+			"supportsTablet": true,
+			"bundleIdentifier": "com.bycedric.huep"
+		},
+		"android": {
+			"package": "com.bycedric.huep",
+			"permissions": []
 		}
 	}
 }
