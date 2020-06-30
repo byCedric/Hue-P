@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Text, Layout, Button, Card, useTheme } from '@ui-kitten/components';
