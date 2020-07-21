@@ -23,7 +23,7 @@
 		"expo": "^38.0.0",
 		"expo-font": "~8.2.1",
 		"hue-hacking-node": "^1.5.0",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.19",
 		"p-retry": "^4.2.0",
 		"patch-package": "^6.2.2",
 		"react": "16.11.0",
