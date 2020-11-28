@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Text, Layout, Button, Card, useTheme } from '@ui-kitten/components';
@@ -69,22 +69,24 @@ export const SetupLightsScreen: React.FC = () => {
 						const isActive = hue.lightsEnabled[light.lampIndex];
 
 						return (
-							<Card
-								key={`light-${light.lampIndex}`}
-								onPress={() => hue.toggleLight(light)}
-								style={[styles.light, isDisabled && styles.lightDisabled]}
-								disabled={isDisabled}
-								activeOpacity={0.75}
-								appearance='filled'
-								status='primary'
-							>
-								<Text category='label' style={isActive && textStyleEnabled}>
-									#{light.lampIndex} - {light.name}
-								</Text>
-								<Text category='p2' style={isActive && textStyleEnabled}>
-									{light.type}
-								</Text>
-							</Card>
+							<View style={styles.lightContainer}>
+								<Card
+									key={`light-${light.lampIndex}`}
+									onPress={() => hue.toggleLight(light)}
+									style={isDisabled && styles.lightDisabled}
+									disabled={isDisabled}
+									activeOpacity={0.75}
+									appearance='filled'
+									status='primary'
+								>
+									<Text category='label' style={isActive && textStyleEnabled}>
+										#{light.lampIndex} - {light.name}
+									</Text>
+									<Text category='p2' style={isActive && textStyleEnabled}>
+										{light.type}
+									</Text>
+								</Card>
+							</View>
 						);
 					})}
 				</Layout>
@@ -114,8 +116,9 @@ const styles = StyleSheet.create({
 		flexWrap: 'wrap',
 		justifyContent: 'center',
 	},
-	light: {
-		margin: 8,
+	lightContainer: {
+		padding: 8,
+		flexBasis: '50%',
 	},
 	lightDisabled: {
 		opacity: 0.5,
