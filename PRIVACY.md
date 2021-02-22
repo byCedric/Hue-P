@@ -1,6 +1,6 @@
 # Privacy Policy
 
-This privacy policy governs your use of the software application Gray One (“Application”) for mobile devices that was created by Cedric van Putten. Please read this policy and our Mobile Terms and Conditions carefully; by using the App you confirm to have understood and agreed to them.
+This privacy policy governs your use of the software application Hue-P (“Application”) for mobile devices that was created by Cedric van Putten. Please read this policy and our Mobile Terms and Conditions carefully; by using the App you confirm to have understood and agreed to them.
 
 ## What information does the Application obtain and how is it used?
 
