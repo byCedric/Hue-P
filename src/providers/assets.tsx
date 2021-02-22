@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppLoading } from 'expo';
+import AppLoading from 'expo-app-loading';
 import { Raleway_700Bold } from '@expo-google-fonts/raleway';
 import {
 	useFonts,

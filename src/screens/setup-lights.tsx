@@ -69,7 +69,7 @@ export const SetupLightsScreen: React.FC = () => {
 						const isActive = hue.lightsEnabled[light.lampIndex];
 
 						return (
-							<View style={styles.lightContainer}>
+							<View style={styles.lightContainer} key={light.uniqueid}>
 								<Card
 									key={`light-${light.lampIndex}`}
 									onPress={() => hue.toggleLight(light)}
