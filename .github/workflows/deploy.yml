@@ -10,18 +10,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Set up Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
-          node-version: 12.x
+          node-version: 14.x
       - name: Set up Expo
         uses: expo/expo-github-action@v5
         with:
           expo-cache: true
           expo-token: ${{ secrets.EXPO_TOKEN }}
           expo-version: 4.x
+      - name: Find cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Restore cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
       - name: Publish to Expo
         run: expo publish
