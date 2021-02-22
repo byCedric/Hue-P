@@ -8,7 +8,7 @@
 			"android",
 			"web"
 		],
-		"version": "0.1.0",
+		"version": "0.2.0",
 		"orientation": "portrait",
 		"icon": "./src/assets/images/app-icon.png",
 		"splash": {
@@ -25,12 +25,12 @@
 		"ios": {
 			"supportsTablet": true,
 			"bundleIdentifier": "com.bycedric.huep",
-			"buildNumber": "0.1.0"
+			"buildNumber": "0.2.0"
 		},
 		"android": {
 			"package": "com.bycedric.huep",
 			"permissions": [],
-			"versionCode": 380000100
+			"versionCode": 400000200
 		},
 		"androidStatusBar": {
 			"barStyle": "light-content"
