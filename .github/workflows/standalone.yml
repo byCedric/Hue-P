@@ -1,9 +1,16 @@
 ---
-name: Deploy
+name: Standalone
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      type:
+        description: Type of the build (apk/aab)
+        required: true
+        default: apk
+      channel:
+        description: Release channel to build with
+        required: true
+        default: default
 jobs:
   publish:
     name: Install and publish
@@ -33,5 +40,5 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-      - name: Publish to Expo
-        run: expo publish
+      - name: Build standalone with Expo
+        run: expo build:android --type ${{ github.event.inputs.type }} --release-channel ${{ github.event.inputs.channel }}
