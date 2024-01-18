@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { type StackNavigationProp } from '@react-navigation/stack';
 import { Text, Layout, Button, Card, useTheme } from '@ui-kitten/components';
 import { useCallback, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Message } from '../components/message';
 import { Screen } from '../components/screen';
@@ -52,8 +52,6 @@ export function SetupLightsScreen() {
     );
   }
 
-  const textStyleEnabled = { color: theme['color-basic-200'] };
-
   return (
     <Screen>
       <Layout style={styles.container}>
@@ -65,46 +63,48 @@ export function SetupLightsScreen() {
               : `We found ${hue.allLights.length} light bulbs! Press on the ones you want to use.`
           }
         />
-        <Layout style={styles.lights}>
-          {hue.allLights.map((light) => {
-            const isDisabled = !light.state.xy;
-            const isActive = hue.lightsEnabled[light.lampIndex];
+        <ScrollView style={styles.lightsScroll}>
+          <View style={styles.lightsLayout}>
+            {hue.allLights.map((light) => {
+              const isDisabled = !light.state.xy;
+              const isActive = hue.lightsEnabled[light.lampIndex];
 
-            return (
-              <View style={styles.lightContainer} key={light.lampIndex}>
-                <Card
-                  key={`light-${light.lampIndex}`}
-                  onPress={() => hue.toggleLight(light)}
-                  style={isDisabled && styles.lightDisabled}
-                  disabled={isDisabled}
-                  activeOpacity={0.75}
-                  appearance="filled"
-                  status="primary"
-                >
-                  <Text category="label" style={isActive && textStyleEnabled}>
-                    #{light.lampIndex} - {light.name}
-                  </Text>
-                  <Text category="p2" style={isActive && textStyleEnabled}>
-                    {light.type}
-                  </Text>
-                </Card>
-              </View>
-            );
-          })}
-        </Layout>
-        <Button
-          onPress={onLightSave}
-          disabled={!hue.hasLightEnabled}
-          accessoryRight={() =>
-            !hue.hasLightEnabled ? (
-              <></>
-            ) : (
-              <MaterialIcons name="navigate-next" color="white" size={24} />
-            )
-          }
-        >
-          Im done!
-        </Button>
+              return (
+                <View style={styles.lightContainer} key={light.lampIndex}>
+                  <Card
+                    key={`light-${light.lampIndex}`}
+                    onPress={() => hue.toggleLight(light)}
+                    style={isDisabled ? styles.lightDisabled : !isActive && styles.lightInactive}
+                    disabled={isDisabled}
+                    activeOpacity={0.75}
+                    appearance="filled"
+                    status="primary"
+                  >
+                    <Text category="label">
+                      #{light.lampIndex} - {light.name}
+                    </Text>
+                    <Text category="p2">{light.type}</Text>
+                  </Card>
+                </View>
+              );
+            })}
+          </View>
+        </ScrollView>
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={onLightSave}
+            disabled={!hue.hasLightEnabled}
+            accessoryRight={() =>
+              !hue.hasLightEnabled ? (
+                <></>
+              ) : (
+                <MaterialIcons name="navigate-next" color="white" size={24} />
+              )
+            }
+          >
+            Im done!
+          </Button>
+        </View>
       </Layout>
     </Screen>
   );
@@ -116,7 +116,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  lights: {
+  lightsScroll: {
+    width: '100%',
+  },
+  lightsLayout: {
     margin: 16,
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -126,7 +129,13 @@ const styles = StyleSheet.create({
     padding: 8,
     flexBasis: '50%',
   },
-  lightDisabled: {
+  lightInactive: {
     opacity: 0.5,
   },
+  lightDisabled: {
+    opacity: 0.15,
+  },
+  buttonContainer: {
+    margin: 16,
+  }
 });

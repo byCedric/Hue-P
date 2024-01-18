@@ -1,3 +1,4 @@
+import { useAsyncStorage } from '@react-native-async-storage/async-storage';
 import { type Lamp as HueLight } from 'hue-hacking-node';
 import {
   createContext,
@@ -75,24 +76,71 @@ export function useHueDiscovery(): [HueBridgeInfo[], boolean, () => Promise<void
 
 export function useHueAuthenticate(bridge: HueBridgeInfo): [string, boolean, () => Promise<void>] {
   const hue = useHue();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [session, setSession] = useState('');
+  const storedSession = useStoredSession();
 
   const authenticate = useCallback(async () => {
     setLoading(true);
     try {
-      const newSession = await HueSdk.authenticate(bridge);
-      setSession(newSession);
-      hue.setSdk(new HueSdk({ key: newSession, ip: bridge.internalipaddress }));
+      const key = await HueSdk.authenticate(bridge);
+      await storedSession.setStoredSession({ key, ip: bridge.internalipaddress });
+      setSession(key);
+      hue.setSdk(new HueSdk({ key, ip: bridge.internalipaddress }));
     } catch (error) {
       console.warn(error);
       setSession('');
     } finally {
       setLoading(false);
     }
+  }, [storedSession.setStoredSession]);
+
+  useEffect(() => {
+    setLoading(true);
+    storedSession.getStoredSession().then((oldSession) => {
+      if (!oldSession) {
+        setLoading(false);
+        return;
+      }
+
+      const oldSdk = new HueSdk({ key: oldSession.key, ip: oldSession.ip });
+
+      oldSdk
+        .getLamps()
+        .then(() => {
+          setSession(oldSession.key);
+          hue.setSdk(oldSdk);
+        })
+        .catch(() => {
+          setSession('');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    });
   }, []);
 
   return [session, loading, authenticate];
+}
+
+type StoredSession = {
+  key: string;
+  ip: string;
+};
+
+function useStoredSession() {
+  const storage = useAsyncStorage('hue-session');
+
+  return {
+    removeStoredSession: storage.removeItem,
+    async getStoredSession(): Promise<StoredSession | null> {
+      const item = await storage.getItem();
+      return item ? JSON.parse(item) : null;
+    },
+    async setStoredSession(info: StoredSession) {
+      return await storage.setItem(JSON.stringify(info));
+    },
+  };
 }
 
 export function useHueLights() {
