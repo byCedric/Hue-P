@@ -1,26 +1,32 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { type StackNavigationProp } from '@react-navigation/stack';
-import { Text, Layout, Button, Card, useTheme } from '@ui-kitten/components';
+import { Text, Layout, Button, Card } from '@ui-kitten/components';
 import { useCallback, useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Message } from '../components/message';
 import { Screen } from '../components/screen';
-import { useHueLights } from '../providers/hue';
+import { useHue, useHueLights } from '../providers/hue';
 import { type RootStackParamList } from '../providers/navigation';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'SetupLights'>;
 
 export function SetupLightsScreen() {
+  const { resetSession } = useHue();
   const navigation = useNavigation<NavigationProp>();
   const hue = useHueLights();
-  const theme = useTheme();
 
   const onLightSave = useCallback(() => {
     hue.saveLights();
     navigation.navigate('SetupPattern');
   }, [hue.saveLights]);
+
+  const onBridgeReset = useCallback(() => {
+    resetSession().then(() => {
+      navigation.navigate('SetupBridgeDiscover');
+    });
+  }, []);
 
   useEffect(() => {
     if (!hue.allLights.length) {
@@ -92,15 +98,20 @@ export function SetupLightsScreen() {
         </ScrollView>
         <View style={styles.buttonContainer}>
           <Button
+            onPress={onBridgeReset}
+            appearance="outline"
+            accessoryLeft={() => <MaterialIcons name="navigate-before" color="white" size={24} />}
+          >
+            {(props) => (
+              <Text {...props} style={[props?.style, { color: 'white' }]}>
+                Select different bridge
+              </Text>
+            )}
+          </Button>
+          <Button
             onPress={onLightSave}
             disabled={!hue.hasLightEnabled}
-            accessoryRight={() =>
-              !hue.hasLightEnabled ? (
-                <></>
-              ) : (
-                <MaterialIcons name="navigate-next" color="white" size={24} />
-              )
-            }
+            accessoryRight={() => <MaterialIcons name="navigate-next" color="white" size={24} />}
           >
             Im done!
           </Button>
@@ -136,6 +147,10 @@ const styles = StyleSheet.create({
     opacity: 0.15,
   },
   buttonContainer: {
-    margin: 16,
-  }
+    width: '100%',
+    paddingHorizontal: 24,
+    marginVertical: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
 });

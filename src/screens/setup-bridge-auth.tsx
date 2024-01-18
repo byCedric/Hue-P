@@ -16,7 +16,7 @@ export function SetupBridgeAuthScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute();
 
-  const { bridge } = route.params as { bridge: HueBridgeInfo };
+  const { bridge } = route.params as { bridge: Pick<HueBridgeInfo, 'internalipaddress'> };
   const [session, loading, authenticate] = useHueAuthenticate(bridge);
 
   const onLightSetup = useCallback(() => {

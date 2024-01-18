@@ -6,37 +6,27 @@ import { StyleSheet } from 'react-native';
 
 import { Message } from '../components/message';
 import { Screen } from '../components/screen';
-import { useHueDiscovery, type HueBridgeInfo, useStoredHueSession } from '../providers/hue';
+import { useHueDiscovery, type HueBridgeInfo, useHue } from '../providers/hue';
 import { type RootStackParamList } from '../providers/navigation';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'SetupBridgeDiscover'>;
 
 export function SetupBridgeDiscoverScreen() {
+  const hue = useHue();
   const navigation = useNavigation<NavigationProp>();
   const [bridges, loading, discover] = useHueDiscovery();
-  const storedSession = useStoredHueSession();
 
   const onBridgePress = useCallback((bridge: HueBridgeInfo) => {
     navigation.navigate('SetupBridgeAuth', { bridge });
   }, []);
 
   useEffect(() => {
-    if (!bridges.length) {
-      discover().then((discoverdBridges = []) => {
-        storedSession.getStoredSession().then((oldSession) => {
-          if (oldSession) {
-            const oldBridge = discoverdBridges.find(
-              (bridge) => bridge.internalipaddress === oldSession.ip
-            );
-
-            if (oldBridge) {
-              onBridgePress(oldBridge);
-            }
-          }
-        });
-      });
+    if (hue.initialState === 'authenticated') {
+      navigation.navigate('SetupLights');
+    } else if (hue.initialState === 'unauthenticated' && !bridges.length) {
+      discover();
     }
-  }, []);
+  }, [hue.initialState]);
 
   if (loading) {
     return (

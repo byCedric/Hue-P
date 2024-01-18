@@ -15,14 +15,18 @@ export * from '../services/hue';
 
 export type HueContextData = {
   sdk: HueSdk;
+  initialState: 'loading' | 'authenticated' | 'unauthenticated';
   setSdk: (sdk: HueSdk) => void;
   lights: HueLight[];
   setLights: (lights: HueLight[]) => void;
   pattern: HuePattern;
   setPattern: (pattern: HuePattern) => void;
+  resetSession: () => Promise<void>;
 };
+
 export const HueContext = createContext<HueContextData>({
   sdk: new HueSdk(),
+  initialState: 'loading',
   pattern: HuePattern.getKnightRider(),
   lights: [],
   setSdk: () => {
@@ -34,22 +38,63 @@ export const HueContext = createContext<HueContextData>({
   setLights: () => {
     throw new Error('Missing Hue provider');
   },
+  resetSession: () => {
+    throw new Error('Missing Hue provider');
+  },
 });
 
 type HueProviderProps = PropsWithChildren;
 
 export function HueProvider(props: HueProviderProps) {
   const [sdk, setSdk] = useState(new HueSdk());
+  const [initialState, setInitialState] = useState<HueContextData['initialState']>('loading');
   const [lights, setLights] = useState<HueLight[]>([]);
   const [pattern, setPattern] = useState<HuePattern>(HuePattern.getKnightRider());
+  const storedSession = useStoredHueSession();
+
+  const resetSession = useCallback(async () => {
+    await storedSession.removeStoredSession();
+    setInitialState('unauthenticated');
+    setSdk(new HueSdk());
+  }, []);
 
   useEffect(() => sdk.setnumberOfLamps(lights.length), [sdk, lights.length]);
 
+  useEffect(() => {
+    storedSession
+      .getStoredSession()
+      .then((oldSession) => restartStoredSession(oldSession))
+      .then((oldSdk) => {
+        if (oldSdk) {
+          setSdk(oldSdk);
+          setInitialState('authenticated');
+        } else {
+          setInitialState('unauthenticated');
+        }
+      });
+  }, []);
+
   return (
-    <HueContext.Provider value={{ sdk, setSdk, lights, setLights, pattern, setPattern }}>
+    <HueContext.Provider
+      value={{ sdk, setSdk, lights, setLights, pattern, setPattern, initialState, resetSession }}
+    >
       {props.children}
     </HueContext.Provider>
   );
+}
+
+async function restartStoredSession(session: StoredHueSession | null) {
+  if (!session) return null;
+
+  const sdk = new HueSdk({ key: session.key, ip: session.ip });
+
+  try {
+    await sdk.getLamps();
+    return sdk;
+  } catch (error) {
+    console.warn(error);
+    return null;
+  }
 }
 
 export function useHue() {
@@ -80,7 +125,9 @@ export function useHueDiscovery(): [
   return [bridges, loading, fetch];
 }
 
-export function useHueAuthenticate(bridge: HueBridgeInfo): [string, boolean, () => Promise<void>] {
+export function useHueAuthenticate(
+  bridge: Pick<HueBridgeInfo, 'internalipaddress'>
+): [string, boolean, () => Promise<void>] {
   const hue = useHue();
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState('');
@@ -100,31 +147,6 @@ export function useHueAuthenticate(bridge: HueBridgeInfo): [string, boolean, () 
       setLoading(false);
     }
   }, [storedSession.setStoredSession]);
-
-  useEffect(() => {
-    setLoading(true);
-    storedSession.getStoredSession().then((oldSession) => {
-      if (!oldSession) {
-        setLoading(false);
-        return;
-      }
-
-      const oldSdk = new HueSdk({ key: oldSession.key, ip: oldSession.ip });
-
-      oldSdk
-        .getLamps()
-        .then(() => {
-          setSession(oldSession.key);
-          hue.setSdk(oldSdk);
-        })
-        .catch(() => {
-          setSession('');
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    });
-  }, []);
 
   return [session, loading, authenticate];
 }

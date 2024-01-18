@@ -72,7 +72,7 @@ export class HueSdk extends Hue {
    * Try and authenticate with the bridge.
    * This will poll the bridge with an interval and limited amount of attempts.
    */
-  static async authenticate(bridge: HueBridgeInfo) {
+  static async authenticate(bridge: Pick<HueBridgeInfo, 'internalipaddress'>) {
     return pRetry(
       async () => {
         const { data } = await axios.post(`http://${bridge.internalipaddress}/api`, {
