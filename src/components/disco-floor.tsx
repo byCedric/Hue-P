@@ -1,7 +1,8 @@
 import { useTheme } from '@ui-kitten/components';
-import range from 'lodash/range';
 import { useState, useCallback, useMemo, PropsWithChildren } from 'react';
 import { StyleSheet, View, LayoutChangeEvent } from 'react-native';
+
+import { createArray } from '../utils/array';
 
 type DiscoFloorProps = PropsWithChildren<{
   /** The amount of tiles to render horizontally */
@@ -29,7 +30,7 @@ export function DiscoFloor({
     [containerWidth, width, height]
   );
 
-  const tiles = useMemo(() => range(0, width * height), [width, height]);
+  const tiles = useMemo(() => createArray(width * height), [width, height]);
 
   const onContainerLayout = useCallback((event: LayoutChangeEvent) => {
     setContainerWidth(event.nativeEvent.layout.width);
