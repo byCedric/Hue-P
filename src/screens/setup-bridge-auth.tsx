@@ -1,5 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import { Layout, Button, Spinner } from '@ui-kitten/components';
 import { useCallback, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
@@ -7,9 +7,10 @@ import { StyleSheet } from 'react-native';
 import { Message } from '../components/message';
 import { Screen } from '../components/screen';
 import { useHueAuthenticate, HueBridgeInfo } from '../providers/hue';
+import { useRootNavigation } from '../providers/navigation';
 
 export function SetupBridgeAuthScreen() {
-  const navigation = useNavigation();
+  const navigation = useRootNavigation();
   const route = useRoute();
 
   const { bridge } = route.params as { bridge: HueBridgeInfo };

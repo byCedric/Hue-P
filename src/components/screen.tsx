@@ -1,5 +1,5 @@
 import { Layout, useTheme } from '@ui-kitten/components';
-import { PropsWithChildren } from 'react';
+import { type PropsWithChildren } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 
 type ScreenProps = PropsWithChildren;

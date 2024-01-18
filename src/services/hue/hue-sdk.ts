@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { Hue, Lamp as HueLight } from 'hue-hacking-node';
+import { Hue, type Lamp as HueLight } from 'hue-hacking-node';
 import pRetry from 'p-retry';
 
-import { HuePatternBlock } from './hue-pattern';
+import { type HuePatternBlock } from './hue-pattern';
 
 export type HueLightId = HueLight['lampIndex'];
 export type HueLightState = Pick<HueLight['state'], 'on' | 'bri' | 'xy'>;

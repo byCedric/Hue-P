@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
 import { Text, Layout, Card } from '@ui-kitten/components';
 import { useCallback } from 'react';
 import { StyleSheet } from 'react-native';
@@ -6,6 +5,7 @@ import { StyleSheet } from 'react-native';
 import { Message } from '../components/message';
 import { Screen } from '../components/screen';
 import { HuePattern, useHue } from '../providers/hue';
+import { useRootNavigation } from '../providers/navigation';
 
 const patterns = [
   {
@@ -26,7 +26,7 @@ const patterns = [
 ];
 
 export function SetupPatternScreen() {
-  const navigation = useNavigation();
+  const navigation = useRootNavigation();
   const hue = useHue();
 
   const onPatternPress = useCallback((pattern: HuePattern) => {

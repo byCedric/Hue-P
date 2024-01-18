@@ -1,14 +1,24 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { createStackNavigator, type StackNavigationProp } from '@react-navigation/stack';
 
+import { type HueBridgeInfo } from './hue';
 import { DiscoScreen } from '../screens/disco';
 import { SetupBridgeAuthScreen } from '../screens/setup-bridge-auth';
 import { SetupBridgeDiscoverScreen } from '../screens/setup-bridge-discover';
 import { SetupLightsScreen } from '../screens/setup-lights';
 import { SetupPatternScreen } from '../screens/setup-pattern';
 
-const Stack = createStackNavigator();
+type RootStackParamList = {
+  SetupBridgeDiscover: undefined;
+  SetupBridgeAuth: { bridge: HueBridgeInfo };
+  SetupLights: undefined;
+  SetupPattern: undefined;
+  Disco: undefined;
+};
+
+type RootStackNavigationProp = StackNavigationProp<RootStackParamList>;
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 export function NavigationProvider() {
   return (
@@ -25,4 +35,8 @@ export function NavigationProvider() {
       </Stack.Navigator>
     </NavigationContainer>
   );
+}
+
+export function useRootNavigation() {
+  return useNavigation<RootStackNavigationProp>();
 }

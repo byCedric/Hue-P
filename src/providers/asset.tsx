@@ -1,6 +1,6 @@
 import { useFonts, OpenSans_400Regular, OpenSans_600SemiBold } from '@expo-google-fonts/open-sans';
 import { Raleway_700Bold } from '@expo-google-fonts/raleway';
-import { PropsWithChildren } from 'react';
+import { type PropsWithChildren } from 'react';
 
 type AssetProviderProps = PropsWithChildren;
 

@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
 import { Card, Text, Layout, Button } from '@ui-kitten/components';
 import { useEffect, useCallback } from 'react';
 import { StyleSheet } from 'react-native';
@@ -6,9 +5,10 @@ import { StyleSheet } from 'react-native';
 import { Message } from '../components/message';
 import { Screen } from '../components/screen';
 import { useHueDiscovery, HueBridgeInfo } from '../providers/hue';
+import { useRootNavigation } from '../providers/navigation';
 
 export function SetupBridgeDiscoverScreen() {
-  const navigation = useNavigation();
+  const navigation = useRootNavigation();
   const [bridges, loading, discover] = useHueDiscovery();
 
   const onBridgePress = useCallback((bridge: HueBridgeInfo) => {

@@ -1,14 +1,35 @@
 name: review
 on:
+  push:
+    branches: [main]
   pull_request:
     types: [opened, synchronize]
 
 concurrency:
-  group: review-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: yarn
+
+      - name: 📦 Install dependencies
+        run: yarn install
+
+      - name: 🚨 Lint project
+        run: yarn lint --max-warnings 0
+
   preview:
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write

@@ -1,14 +1,14 @@
-import { Lamp as HueLight } from 'hue-hacking-node';
+import { type Lamp as HueLight } from 'hue-hacking-node';
 import {
   createContext,
   useEffect,
   useContext,
   useState,
   useCallback,
-  PropsWithChildren,
+  type PropsWithChildren,
 } from 'react';
 
-import { HueSdk, HueBridgeInfo, HuePattern } from '../services/hue';
+import { HueSdk, type HueBridgeInfo, HuePattern } from '../services/hue';
 
 export * from '../services/hue';
 

@@ -4,7 +4,7 @@ export function isObject(item: unknown): item is Record<string, any> {
 }
 
 /** Merge any `source` object(s) into the `target` object, using deep merge */
-export function mergeObjects(target: object, ...sources: object[]) {
+export function mergeObjects<T>(target: object, ...sources: T[]) {
   if (!sources.length) return target;
   const source = sources.shift();
 

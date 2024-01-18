@@ -2,13 +2,13 @@ import { useCallback, useState } from 'react';
 import {
   StyleSheet,
   View,
-  LayoutChangeEvent,
-  GestureResponderEvent,
-  PanResponderGestureState,
+  type LayoutChangeEvent,
+  type GestureResponderEvent,
+  type PanResponderGestureState,
 } from 'react-native';
 import Draggable from 'react-native-draggable';
 
-import { HueLight } from '../providers/hue';
+import { type HueLight } from '../providers/hue';
 
 type LightMapProps = {
   /** The amount of tiles to render horizontally */

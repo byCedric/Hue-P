@@ -1,5 +1,4 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import { Text, Layout, Button, Card, useTheme } from '@ui-kitten/components';
 import { useCallback, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -7,9 +6,10 @@ import { StyleSheet, View } from 'react-native';
 import { Message } from '../components/message';
 import { Screen } from '../components/screen';
 import { useHueLights } from '../providers/hue';
+import { useRootNavigation } from '../providers/navigation';
 
 export function SetupLightsScreen() {
-  const navigation = useNavigation();
+  const navigation = useRootNavigation();
   const hue = useHueLights();
   const theme = useTheme();
 

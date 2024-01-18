@@ -1,6 +1,6 @@
 import { useTheme } from '@ui-kitten/components';
-import { useState, useCallback, useMemo, PropsWithChildren } from 'react';
-import { StyleSheet, View, LayoutChangeEvent } from 'react-native';
+import { useState, useCallback, useMemo, type PropsWithChildren } from 'react';
+import { StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 
 import { createArray } from '../utils/array';
 

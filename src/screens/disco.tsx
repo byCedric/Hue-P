@@ -1,5 +1,4 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import { Layout, Button } from '@ui-kitten/components';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { StyleSheet, View, LayoutChangeEvent } from 'react-native';
@@ -9,12 +8,13 @@ import { LightMap } from '../components/light-map';
 import { Message } from '../components/message';
 import { Screen } from '../components/screen';
 import { useHue, HueLight, HuePatternFrame } from '../providers/hue';
+import { useRootNavigation } from '../providers/navigation';
 
 const gridWidth = 5;
 const gridHeight = 1;
 
 export function DiscoScreen() {
-  const navigation = useNavigation();
+  const navigation = useRootNavigation();
   const hue = useHue();
   const lightGrid = useRef<{ [key: number]: number }>({}).current;
   const loopId = useRef<number | undefined>();

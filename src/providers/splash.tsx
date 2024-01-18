@@ -1,5 +1,5 @@
 import * as SplashScreen from 'expo-splash-screen';
-import { PropsWithChildren, useEffect } from 'react';
+import { type PropsWithChildren, useEffect } from 'react';
 
 type SplashProviderProps = PropsWithChildren;
 
