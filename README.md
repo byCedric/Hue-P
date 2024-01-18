@@ -13,15 +13,9 @@
     </a>
   </sup>
   <br />
-  <!-- <p align="center">
-      <a href="https://github.com/byCedric/use-expo#usage"><b>Usage</b></a>
-      &nbsp;&nbsp;&mdash;&nbsp;&nbsp;
-      <a href="https://github.com/byCedric/use-expo/blob/master/CHANGELOG.md"><b>Changelog</b></a>
-  </p>
-  <br /> -->
 </div>
 
-- Todo
+- TBD
 
 <div align="center">
   <br />
