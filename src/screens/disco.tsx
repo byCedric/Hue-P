@@ -1,20 +1,24 @@
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { type StackNavigationProp } from '@react-navigation/stack';
 import { Layout, Button } from '@ui-kitten/components';
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { StyleSheet, View, LayoutChangeEvent } from 'react-native';
+import { StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 
 import { DiscoFloor } from '../components/disco-floor';
 import { LightMap } from '../components/light-map';
 import { Message } from '../components/message';
 import { Screen } from '../components/screen';
-import { useHue, HueLight, HuePatternFrame } from '../providers/hue';
-import { useRootNavigation } from '../providers/navigation';
+import { useHue, HueLight, type HuePatternFrame } from '../providers/hue';
+import { type RootStackParamList } from '../providers/navigation';
 
 const gridWidth = 5;
 const gridHeight = 1;
 
+type NavigationProp = StackNavigationProp<RootStackParamList, 'Disco'>;
+
 export function DiscoScreen() {
-  const navigation = useRootNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const hue = useHue();
   const lightGrid = useRef<{ [key: number]: number }>({}).current;
   const loopId = useRef<number | undefined>();

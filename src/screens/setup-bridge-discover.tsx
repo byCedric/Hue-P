@@ -1,14 +1,18 @@
+import { useNavigation } from '@react-navigation/native';
+import { type StackNavigationProp } from '@react-navigation/stack';
 import { Card, Text, Layout, Button } from '@ui-kitten/components';
 import { useEffect, useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { Message } from '../components/message';
 import { Screen } from '../components/screen';
-import { useHueDiscovery, HueBridgeInfo } from '../providers/hue';
-import { useRootNavigation } from '../providers/navigation';
+import { useHueDiscovery, type HueBridgeInfo } from '../providers/hue';
+import { type RootStackParamList } from '../providers/navigation';
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'SetupBridgeDiscover'>;
 
 export function SetupBridgeDiscoverScreen() {
-  const navigation = useRootNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const [bridges, loading, discover] = useHueDiscovery();
 
   const onBridgePress = useCallback((bridge: HueBridgeInfo) => {

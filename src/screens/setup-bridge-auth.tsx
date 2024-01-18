@@ -1,16 +1,19 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { type StackNavigationProp } from '@react-navigation/stack';
 import { Layout, Button, Spinner } from '@ui-kitten/components';
 import { useCallback, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { Message } from '../components/message';
 import { Screen } from '../components/screen';
-import { useHueAuthenticate, HueBridgeInfo } from '../providers/hue';
-import { useRootNavigation } from '../providers/navigation';
+import { useHueAuthenticate, type HueBridgeInfo } from '../providers/hue';
+import { type RootStackParamList } from '../providers/navigation';
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'SetupBridgeAuth'>;
 
 export function SetupBridgeAuthScreen() {
-  const navigation = useRootNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const route = useRoute();
 
   const { bridge } = route.params as { bridge: HueBridgeInfo };

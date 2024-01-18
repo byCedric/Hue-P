@@ -1,4 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { type StackNavigationProp } from '@react-navigation/stack';
 import { Text, Layout, Button, Card, useTheme } from '@ui-kitten/components';
 import { useCallback, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -6,10 +8,12 @@ import { StyleSheet, View } from 'react-native';
 import { Message } from '../components/message';
 import { Screen } from '../components/screen';
 import { useHueLights } from '../providers/hue';
-import { useRootNavigation } from '../providers/navigation';
+import { type RootStackParamList } from '../providers/navigation';
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'SetupLights'>;
 
 export function SetupLightsScreen() {
-  const navigation = useRootNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const hue = useHueLights();
   const theme = useTheme();
 
@@ -67,7 +71,7 @@ export function SetupLightsScreen() {
             const isActive = hue.lightsEnabled[light.lampIndex];
 
             return (
-              <View style={styles.lightContainer} key={light.uniqueid}>
+              <View style={styles.lightContainer} key={light.lampIndex}>
                 <Card
                   key={`light-${light.lampIndex}`}
                   onPress={() => hue.toggleLight(light)}
