@@ -32,20 +32,25 @@ jobs:
       - name: 🏗 Setup repository
         uses: actions/checkout@v4
 
+      - name: 🏗 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
       - name: 🏗 Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-          cache: yarn
 
       - name: 🏗 Setup Expo
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
+          packager: bun
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
-        run: yarn install
+        run: bun install
 
       - name: 👷 Configure project
         run: eas init --id c4791c75-f6de-4aa3-8408-67626d422b43
@@ -60,11 +65,15 @@ jobs:
       - name: 🏗 Setup repo
         uses: actions/checkout@v4
 
+      - name: 🏗 Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
       - name: 🏗 Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-          cache: yarn
 
       - name: 🏗 Setup Expo
         uses: expo/expo-github-action@v8
@@ -73,7 +82,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
-        run: yarn install
+        run: bun install
 
       - name: 👷 Configure project
         run: eas init --id c4791c75-f6de-4aa3-8408-67626d422b43
