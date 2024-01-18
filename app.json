@@ -15,7 +15,11 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
-      "**/*"
+      "src/assets/**/*",
+      "react-native-vector-icons/Fonts/MaterialIcons.ttf",
+      "@expo-google-fonts/raleway/Raleway_700Bold.ttf",
+      "@expo-google-fonts/open-sans/OpenSans_400Regular.ttf",
+      "@expo-google-fonts/open-sans/OpenSans_600SemiBold.ttf"
     ],
     "ios": {
       "supportsTablet": true,
