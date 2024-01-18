@@ -1,4 +1,4 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, ThemeProvider } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { type HueBridgeInfo } from './hue';
@@ -18,19 +18,33 @@ export type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
+const navigationTheme = {
+  dark: false,
+  colors: {
+    background: 'transparent',
+    primary: 'transparent',
+    card: 'transparent',
+    text: 'transparent',
+    border: 'transparent',
+    notification: 'transparent',
+  },
+};
+
 export function NavigationProvider() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="SetupBridgeDiscover"
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen name="SetupBridgeDiscover" component={SetupBridgeDiscoverScreen} />
-        <Stack.Screen name="SetupBridgeAuth" component={SetupBridgeAuthScreen} />
-        <Stack.Screen name="SetupLights" component={SetupLightsScreen} />
-        <Stack.Screen name="SetupPattern" component={SetupPatternScreen} />
-        <Stack.Screen name="Disco" component={DiscoScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ThemeProvider value={navigationTheme}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="SetupBridgeDiscover"
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen name="SetupBridgeDiscover" component={SetupBridgeDiscoverScreen} />
+          <Stack.Screen name="SetupBridgeAuth" component={SetupBridgeAuthScreen} />
+          <Stack.Screen name="SetupLights" component={SetupLightsScreen} />
+          <Stack.Screen name="SetupPattern" component={SetupPatternScreen} />
+          <Stack.Screen name="Disco" component={DiscoScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }

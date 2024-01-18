@@ -56,14 +56,20 @@ export function useHue() {
   return useContext(HueContext);
 }
 
-export function useHueDiscovery(): [HueBridgeInfo[], boolean, () => Promise<void>] {
+export function useHueDiscovery(): [
+  HueBridgeInfo[],
+  boolean,
+  () => Promise<HueBridgeInfo[] | undefined>,
+] {
   const [loading, setLoading] = useState(true);
   const [bridges, setBridges] = useState<HueBridgeInfo[]>([]);
 
   const fetch = useCallback(async () => {
     setLoading(true);
     try {
-      setBridges(await HueSdk.discover());
+      const bridges = await HueSdk.discover();
+      setBridges(bridges);
+      return bridges;
     } catch (error) {
       console.warn(error);
     } finally {
@@ -78,7 +84,7 @@ export function useHueAuthenticate(bridge: HueBridgeInfo): [string, boolean, () 
   const hue = useHue();
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState('');
-  const storedSession = useStoredSession();
+  const storedSession = useStoredHueSession();
 
   const authenticate = useCallback(async () => {
     setLoading(true);
@@ -123,21 +129,21 @@ export function useHueAuthenticate(bridge: HueBridgeInfo): [string, boolean, () 
   return [session, loading, authenticate];
 }
 
-type StoredSession = {
+type StoredHueSession = {
   key: string;
   ip: string;
 };
 
-function useStoredSession() {
+export function useStoredHueSession() {
   const storage = useAsyncStorage('hue-session');
 
   return {
     removeStoredSession: storage.removeItem,
-    async getStoredSession(): Promise<StoredSession | null> {
+    async getStoredSession(): Promise<StoredHueSession | null> {
       const item = await storage.getItem();
       return item ? JSON.parse(item) : null;
     },
-    async setStoredSession(info: StoredSession) {
+    async setStoredSession(info: StoredHueSession) {
       return await storage.setItem(JSON.stringify(info));
     },
   };
