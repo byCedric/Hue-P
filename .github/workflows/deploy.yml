@@ -1,37 +1,96 @@
----
-name: Deploy
+name: deploy
+
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Platform to build for
+        default: android
+        type: choice
+        options:
+          - android
+      profile:
+        description: EAS build profile to use
+        required: true
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+      submit:
+        description: Submit to the stores (only for production)
+        default: false
+        type: boolean
+
 jobs:
   publish:
-    name: Install and publish
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Set up repository
-        uses: actions/checkout@v2
-      - name: Set up Node
-        uses: actions/setup-node@v2
+      - name: 🏗 Setup repository
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: 14.x
-      - name: Set up Expo
-        uses: expo/expo-github-action@v5
+          node-version: 18.x
+          cache: yarn
+
+      - name: 🏗 Setup Expo
+        uses: expo/expo-github-action@v8
         with:
-          expo-cache: true
-          expo-token: ${{ secrets.EXPO_TOKEN }}
-          expo-version: 4.x
-      - name: Find cache
-        id: yarn-cache
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: Restore cache
-        uses: actions/cache@v2
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: yarn install
+
+      - name: 👷 Configure project
+        run: eas init --id c4791c75-f6de-4aa3-8408-67626d422b43
+
+      - name: 🚀 Publish update
+        run: eas update --auto --non-interactive
+
+  build:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v4
         with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-      - name: Publish to Expo
-        run: expo publish
+          node-version: 18.x
+          cache: yarn
+
+      - name: 🏗 Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📦 Install dependencies
+        run: yarn install
+
+      - name: 👷 Configure project
+        run: eas init --id c4791c75-f6de-4aa3-8408-67626d422b43
+
+      - name: 📱 Build app
+        if: ${{ github.event.inputs.submit != 'true' }}
+        run: |
+          eas build \
+            --non-interactive \
+            --platform=${{ github.event.inputs.platform }} \
+            --profile=${{ github.event.inputs.profile }}
+
+      - name: 🚀 Build and submit app
+        if: ${{ github.event.inputs.submit == 'true' }}
+        run: |
+          eas build \
+            --non-interactive \
+            --auto-submit \
+            --platform=${{ github.event.inputs.platform }} \
+            --profile=${{ github.event.inputs.profile }}
