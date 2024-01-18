@@ -26,6 +26,10 @@
       "bundleIdentifier": "com.bycedric.huep"
     },
     "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/images/app-icon-adaptive.png",
+        "backgroundColor": "#222B45"
+      },
       "package": "com.bycedric.huep",
       "permissions": [
         "INTERNET"
@@ -33,6 +37,11 @@
     },
     "androidStatusBar": {
       "barStyle": "light-content"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c4791c75-f6de-4aa3-8408-67626d422b43"
+      }
     }
   }
 }
