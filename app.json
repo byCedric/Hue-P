@@ -26,7 +26,10 @@
       "bundleIdentifier": "com.bycedric.huep"
     },
     "android": {
-      "package": "com.bycedric.huep"
+      "package": "com.bycedric.huep",
+      "permissions": [
+        "INTERNET"
+      ]
     },
     "androidStatusBar": {
       "barStyle": "light-content"
